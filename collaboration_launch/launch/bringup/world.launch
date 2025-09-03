@@ -1,0 +1,26 @@
+<launch>
+    <!-- Arguments for the world launch -->
+    <arg name="world" default="$(find gazebo_ros)/worlds/empty.world"/>
+    <arg name="debug" default="false"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="gui" default="true"/>
+
+    <!-- Launch Gazebo with the specified world -->
+    <group>
+        <!-- Include MIR specific remappings -->
+        <remap from="mir/joint_states"                 to="mir/mir/joint_states" />
+        <remap from="mir/mobile_base_controller/cmd_vel" to="mir/cmd_vel" />
+        <remap from="mir/mobile_base_controller/odom"    to="mir/odom" />
+
+        <include file="$(find gazebo_ros)/launch/empty_world.launch">
+            <arg name="world_name" value="$(arg world)"/>
+            <arg name="debug" value="$(arg debug)" />
+            <arg name="paused" value="$(arg paused)"/>
+            <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+            <arg name="headless" value="$(arg headless)"/>
+            <arg name="gui" value="$(arg gui)" />
+        </include>
+    </group>
+</launch>

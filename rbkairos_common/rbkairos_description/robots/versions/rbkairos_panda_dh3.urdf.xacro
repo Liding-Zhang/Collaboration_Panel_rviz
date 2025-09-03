@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot name="rbkairos" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!-- ***************** -->
+  <!-- Imported elements -->
+  <!-- ***************** -->
+
+  <!-- First we import all posible elements defined in the urdf.xacro files. All these elements are defined as macro:xacros -->
+
+  <!-- Import summit XL base elements -->
+  <xacro:include filename="$(find rbkairos_description)/urdf/bases/rbkairos_base.urdf.xacro" />
+
+  <!-- Include PANDA ARM -->
+  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro" />
+
+  <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro"/>
+
+  <!-- Include DH3 TODO -->
+  <xacro:include filename="$(find rbkairos_description)/urdf/gripper/dh3.urdf.xacro" />
+
+  <!-- Import all available sensors -->
+  <xacro:include filename="$(find robotnik_sensors)/urdf/all_sensors.urdf.xacro" />
+
+
+  <!-- Flag to select the high or low quality model -->
+  <xacro:property name="hq" value="true" />
+
+  <xacro:arg name="prefix" default="robot_"/>
+  <xacro:arg name="ros_planar_move_plugin" default="false"/>
+  <xacro:arg name="load_kinematics_file" default="false"/> <!-- Necesarry for ur_description compatible with official ur drivers-->
+  <xacro:arg name="use_gpu_for_simulation" default="false"/>
+
+  <xacro:property name="arm_position_x" value="0.1883"/>
+  <xacro:property name="arm_position_y" value="0"/>
+  <xacro:property name="arm_position_z" value="0.38212"/>
+  <xacro:property name="arm_orientation_r" value="0"/>
+  <xacro:property name="arm_orientation_p" value="0"/>
+  <xacro:property name="arm_orientation_y" value="${3*pi/4}"/>
+  
+  <xacro:macro name="rbkairos_panda_dh3" params="prefix publish_bf hq load_kinematics_file gpu:=false">
+
+    <!-- *************** -->
+    <!-- Robots Elements -->
+    <!-- *************** -->
+
+    <!-- Here we create the robot elements using the xacro:macros imported at the beggining of this file -->
+
+    <!-- RBKAIROS base -->
+    <xacro:rbkairos_base prefix="$(arg prefix)" publish_bf="true" hq="true" gpu="${gpu}"/>
+
+    <!-- PANDA ARM -->
+    <!--
+    <xacro:franka_robot arm_id="panda"
+                        joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
+    </xacro:franka_robot>
+
+    <joint name="$(arg prefix)arm_base_joint" type="fixed">
+      <origin xyz="${arm_position_x} ${arm_position_y} ${arm_position_z}" rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}"/>
+      <parent link="$(arg prefix)base_link" />
+      <child link="panda_link0" />
+    </joint>
+    -->
+
+    <xacro:franka_arm arm_id="panda"
+                      connected_to="$(arg prefix)base_link"
+                      xyz="${arm_position_x} ${arm_position_y} ${arm_position_z}" rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}"
+                      gazebo="true"
+                      joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
+    </xacro:franka_arm>
+
+
+    <!-- DH3 GRIPPER -->
+    <xacro:dh3 prefix="$(arg prefix)hand" parent="panda_link8">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    </xacro:dh3>
+
+
+    <!-- Intel Realsense -->
+    <!--
+    <xacro:sensor_r430 prefix="$(arg prefix)wrist_rgbd" parent="$(arg prefix)arm_tool0" prefix_topic="wrist_rgbd">
+      <origin xyz="-0.075 0.0 0.065" rpy="0 ${-pi/2} 0"/>
+    </xacro:sensor_r430>
+    -->
+
+    <!-- Gazebo ros control pluggins -->
+    <xacro:ros_control/>
+    <xacro:if value="$(arg ros_planar_move_plugin)">
+      <xacro:omni_steering prefix="$(arg prefix)" publish_tf="true"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:rbkairos_panda_dh3 prefix="$(arg prefix)" publish_bf="true" hq="true" load_kinematics_file="$(arg load_kinematics_file)" gpu="$(arg use_gpu_for_simulation)"/>
+
+</robot>

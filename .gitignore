@@ -1,0 +1,10 @@
+# ROS build and devel
+build/
+devel/
+logs/
+.catkin_tools/
+
+.vs/
+.vscode/
+.idea/
+src/.idea/

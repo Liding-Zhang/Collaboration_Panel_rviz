@@ -1,0 +1,26 @@
+<launch>
+
+    <arg name="robot_x" default="0.0"/>
+    <arg name="robot_y" default="0.0"/>
+    <arg name="tf_prefix" default="mir"/>
+
+    <arg name="local_planner"          default="dwb"             doc="Local planner can be either dwa, dwb, eband, base, teb or pose" />
+    <arg name="with_virtual_walls" default="false" />
+    <arg name="prefix" default="" />
+    <arg name="namespace" default="$(arg tf_prefix)/" doc="Namespace to push all topics into."/>
+
+    <include file="$(find mir_navigation)/launch/amcl.launch">
+          <arg name="initial_pose_x" value="$(arg robot_x)"/>
+          <arg name="initial_pose_y" value="$(arg robot_y)"/>
+          <arg name="tf_prefix" value="$(arg tf_prefix)"/>
+    </include>
+
+    <group ns="$(arg namespace)">
+        <include file="$(find mir_navigation)/launch/move_base.xml">
+        <arg name="local_planner" value="$(arg local_planner)"/>
+        <arg name="with_virtual_walls" value="$(arg with_virtual_walls)" />
+        <arg name="prefix" value="$(arg tf_prefix)/" />
+        </include>
+    </group>
+
+</launch>

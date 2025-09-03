@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- arg to config the launch file-->
+
+    <arg name="launch_rviz" default="true"/>
+    <arg name="launch_robot_a" default="true"/>
+    <arg name="default_map" default="willow_garage/willow_garage.yaml"/>
+    <arg name="default_arm_model" default="panda"/>
+    <arg name="default_gripper_model" default="dh3"/>
+    <arg name="default_xacro" default="rbkairos_$(arg default_arm_model).urdf.xacro"/>
+    <arg name="gazebo_world" default="$(find rbkairos_gazebo)/worlds/office.world"/>
+    <arg name="debug" default="false"/>
+    <arg name="ros_planar_move_plugin" default="true"/>
+    <arg name="load_arm_kinematics_file" default="true"/>
+    <arg name="launch_base_hw_sim" default="false"/>
+    <arg name="launch_battery_estimator" default="false"/>
+    <arg name="use_gpu" default="false"/>
+
+
+    <!--params of the different robots-->
+    <!-- robot a -->
+    <arg name="id_robot_a" default="robot_a"/>
+    <arg name="x_init_pose_robot_a" default="0" />
+    <arg name="y_init_pose_robot_a" default="0" />
+    <arg name="z_init_pose_robot_a" default="0" />
+    <arg name="yaw_init_pose_robot_a" default="0"/>
+    <arg name="localization_robot_a" default="true"/>
+    <arg name="gmapping_robot_a" default="false"/>
+    <arg name="move_base_robot_a" default="false"/>
+    <arg name="amcl_and_mapserver_a" default="false"/>
+    <arg name="map_package_a" default="$(find summit_xl_localization)"/>
+    <arg name="map_folder_a" default="maps"/>
+    <arg name="map_file_a" default="$(arg default_map)"/>
+    <arg name="xacro_robot_a" default="$(arg default_xacro)"/>
+    <arg name="launch_arm_a" default="true"/>
+    <arg name="arm_model_a" default="$(arg default_arm_model)"/>
+    <arg name="moveit_movegroup_a" default="false"/>
+    <arg name="launch_pad_a" default="false"/>
+    <arg name="launch_gripper_a" default="false"/>
+    <arg name="gripper_model_a" default="$(arg default_gripper_model)"/>
+
+    <!--BEGIN ROBOT 1-->
+    <include if="$(arg launch_robot_a)" file="$(find rbkairos_gazebo)/launch/rbkairos_franka_one_robot.launch">
+        <arg name="id_robot" value="$(arg id_robot_a)"/>
+        <arg name="x_init_pose" value="$(arg x_init_pose_robot_a)"/>
+        <arg name="y_init_pose" value="$(arg y_init_pose_robot_a)"/>
+        <arg name="z_init_pose" value="$(arg z_init_pose_robot_a)"/>
+        <arg name="yaw_init_pose" value="$(arg yaw_init_pose_robot_a)"/>
+        <arg name="xacro_robot" value="$(arg xacro_robot_a)"/>
+        <arg name="launch_robot_localization" value="$(arg localization_robot_a)"/>
+        <arg name="launch_amcl_and_mapserver" value="$(arg amcl_and_mapserver_a)"/>
+        <arg name="launch_gmapping" value="$(arg gmapping_robot_a)"/>
+        <arg name="map_package" value="$(arg map_package_a)"/>
+        <arg name="map_folder" value="$(arg map_folder_a)"/>
+        <arg name="map_file" value="$(arg map_file_a)"/>
+        <arg name="launch_move_base" value="$(arg move_base_robot_a)"/>
+        <arg name="ros_planar_move_plugin" value="$(arg ros_planar_move_plugin)"/>
+        <arg name="launch_arm" value="$(arg launch_arm_a)"/>
+        <arg name="arm_model" value="$(arg arm_model_a)"/>
+        <arg name="launch_move_group" value="$(arg moveit_movegroup_a)"/>
+        <arg name="launch_pad" value="$(arg launch_pad_a)"/>
+        <arg name="launch_gripper" value="$(arg launch_gripper_a)"/>
+        <arg name="gripper_model" value="$(arg gripper_model_a)"/>
+        <arg name="load_arm_kinematics_file" value="$(arg load_arm_kinematics_file)"/>
+        <arg name="launch_base_hw_sim" value="$(arg launch_base_hw_sim)"/>
+        <arg name="launch_battery_estimator" value="$(arg launch_battery_estimator)"/>
+        <arg name="use_gpu" value="$(arg use_gpu)"/>
+    </include>
+
+
+    <!-- gazebo simulation and rviz visualization-->
+    <include file="$(find collaboration_launch)/launch/gazebo_rviz.launch">
+        <arg name="launch_rviz" value="$(arg launch_rviz)"/>
+        <arg name="world" value="$(arg gazebo_world)"/>
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="robot_y" value="-2.0"/>
+        <arg name="tf_prefix" value="mir"/>
+        <arg name="map_package" value="$(arg map_package_a)"/>
+        <arg name="map_folder" value="$(arg map_folder_a)"/>
+        <arg name="map_file" value="$(arg map_file_a)"/>
+    </include>
+
+
+</launch>

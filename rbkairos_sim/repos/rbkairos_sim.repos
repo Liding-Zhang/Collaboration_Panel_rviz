@@ -1,0 +1,37 @@
+repositories:
+  src/rbkairos_sim:
+    type: git
+    url: https://github.com/RobotnikAutomation/rbkairos_sim
+    version: noetic-devel
+  src/egh_gripper_common:
+    type: git
+    url: https://github.com/RobotnikAutomation/egh_gripper_common
+    version: master
+  src/rbkairos_common:
+    type: git
+    url: https://github.com/RobotnikAutomation/rbkairos_common
+    version: 56dc0490b40f337180393e1be4ebd5a5a33fd3b2
+  src/roboticsgroup_gazebo_plugins:
+    type: git
+    url: https://github.com/RobotnikAutomation/roboticsgroup_gazebo_plugins
+    version: 509a32ea6accc58d03cebd9d670ae44635adc924
+  src/robotnik_sensors:
+    type: git
+    url: https://github.com/RobotnikAutomation/robotnik_sensors
+    version: melodic-devel
+  src/summit_xl_common:
+    type: git
+    url: https://github.com/RobotnikAutomation/summit_xl_common
+    version: 1b734cbe54709950c9929e685fed069d6db57dc3
+  src/universal_robot:
+    type: git
+    url: https://github.com/fmauch/universal_robot
+    version: 1ffdd69181389b14b7d6342f0c5bad3b45c5e32f  
+  src/wsg50-ros-pkg:
+    type: git
+    url: https://github.com/RobotnikAutomation/wsg50-ros-pkg
+    version: master  
+  src/robotnik_msgs:
+    type: git
+    url: https://github.com/RobotnikAutomation/robotnik_msgs
+    version: master

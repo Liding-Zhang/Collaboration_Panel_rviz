@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<robot name="rbkairos" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!-- ***************** -->
+  <!-- Imported elements -->
+  <!-- ***************** -->
+
+  <!-- First we import all posible elements defined in the urdf.xacro files. All these elements are defined as macro:xacros -->
+
+  <!-- Import summit XL base elements -->
+  <xacro:include filename="$(find rbkairos_description)/urdf/bases/rbkairos_base_extended.urdf.xacro" />
+
+  <!-- Include PANDA ARM -->
+  <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro"/>
+  <!--
+  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro" />
+  -->
+  <!-- Include utils for PANDA -->
+  <xacro:include filename="$(find franka_description)/robots/common/utils.xacro" />
+
+  <!-- Include FRANKA HAND TODO -->
+  <xacro:include filename="$(find franka_description)/robots/common/franka_hand.xacro" />
+
+  <!-- Import all available sensors -->
+  <xacro:include filename="$(find robotnik_sensors)/urdf/all_sensors.urdf.xacro" />
+
+
+  <!-- Flag to select the high or low quality model -->
+  <xacro:property name="hq" value="true" />
+
+  <xacro:property name="arm_id" value="panda" />
+
+  <xacro:arg name="prefix" default="robot_"/>
+  <xacro:arg name="ros_planar_move_plugin" default="false"/>
+  <xacro:arg name="load_kinematics_file" default="false"/> <!-- Necesarry for ur_description compatible with official ur drivers-->
+  <xacro:arg name="use_gpu_for_simulation" default="false"/>
+
+  <xacro:property name="arm_position_x" value="-0.2383"/> <!--0.1883-->
+  <xacro:property name="arm_position_y" value="0"/>
+  <xacro:property name="arm_position_z" value="0.57212"/> <!--0.38212-->
+  <xacro:property name="arm_orientation_r" value="0"/>
+  <xacro:property name="arm_orientation_p" value="0"/>
+  <xacro:property name="arm_orientation_y" value="3.1415926535897931"/>
+
+  
+  <xacro:macro name="rbkairos_panda_hand" params="prefix publish_bf hq load_kinematics_file gpu:=false">
+
+    <!-- *************** -->
+    <!-- Robots Elements -->
+    <!-- *************** -->
+
+    <!-- Here we create the robot elements using the xacro:macros imported at the beggining of this file -->
+
+    <!-- RBKAIROS base -->
+    <xacro:rbkairos_base prefix="$(arg prefix)" publish_bf="true" hq="true" gpu="${gpu}"/>
+
+    <!-- PANDA ARM -->
+    <!--
+    <xacro:franka_robot arm_id="panda"
+                        joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
+    </xacro:franka_robot>
+
+    <joint name="$(arg prefix)arm_base_joint" type="fixed">
+      <origin xyz="${arm_position_x} ${arm_position_y} ${arm_position_z}" rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}"/>
+      <parent link="$(arg prefix)base_link" />
+      <child link="panda_link0" />
+    </joint>
+    -->
+
+    <xacro:franka_arm arm_id="${arm_id}"
+                      connected_to="$(arg prefix)base_link"
+                      xyz="${arm_position_x} ${arm_position_y} ${arm_position_z}" rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}"
+                      gazebo="true"
+                      joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
+    </xacro:franka_arm>
+
+
+    <!-- FRANKA HAND GRIPPER -->
+    <xacro:franka_hand arm_id="${arm_id}" rpy="0 0 ${-pi/4}" connected_to="${arm_id}_link8" gazebo="true" safety_distance="0.03"/>
+
+
+    <!-- Intel Realsense -->
+    <!--
+    <xacro:sensor_r430 prefix="$(arg prefix)wrist_rgbd" parent="$(arg prefix)arm_tool0" prefix_topic="wrist_rgbd">
+      <origin xyz="-0.075 0.0 0.065" rpy="0 ${-pi/2} 0"/>
+    </xacro:sensor_r430>
+    -->
+
+    <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/PositionJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/PositionJointInterface" />
+
+    <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/VelocityJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/VelocityJointInterface" />
+
+    <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/EffortJointInterface" />
+
+
+    <xacro:transmission-franka-state arm_id="${arm_id}" />
+    <!-- -->
+    <xacro:transmission-franka-model arm_id="${arm_id}"
+       root="${arm_id}_joint1"
+       tip="${arm_id}_joint8"
+     />
+
+    <xacro:gazebo-joint joint="${arm_id}_finger_joint1" transmission="hardware_interface/EffortJointInterface" />
+    <xacro:gazebo-joint joint="${arm_id}_finger_joint2" transmission="hardware_interface/EffortJointInterface" />
+    <!-- Friction specific material for Rubber/Rubber contact -->
+    <xacro:gazebo-friction link="${arm_id}_leftfinger" mu="1.13" />
+    <xacro:gazebo-friction link="${arm_id}_rightfinger" mu="1.13" />
+
+
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <controlPeriod>0.001</controlPeriod>
+        <robotSimType>franka_gazebo/FrankaHWSim</robotSimType>
+      </plugin>
+      <self_collide>true</self_collide>
+    </gazebo>
+
+    <!-- Gazebo ros control pluggins
+    <xacro:ros_control/>-->
+
+    <xacro:if value="$(arg ros_planar_move_plugin)">
+      <xacro:omni_steering prefix="$(arg prefix)" publish_tf="true"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:rbkairos_panda_hand prefix="$(arg prefix)" publish_bf="true" hq="true" load_kinematics_file="$(arg load_kinematics_file)" gpu="$(arg use_gpu_for_simulation)"/>
+
+</robot>

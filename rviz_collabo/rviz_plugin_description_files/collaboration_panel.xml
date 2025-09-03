@@ -1,0 +1,7 @@
+<library path="lib/librviz_collabo"> 
+    <class name="my_rviz_panel/CollaborationPanel" type="my_rviz_panel::CollaborationPanel" base_class_type="rviz::Panel">
+        <description>
+            A panel for controlling MiR robots base, RB-Kairos base and franka joints.
+        </description>
+    </class>
+</library>

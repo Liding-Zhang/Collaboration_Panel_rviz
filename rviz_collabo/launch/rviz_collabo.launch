@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="config" default="$(find rviz_collabo)/config/rbkairos_multi_w_collabo.rviz" />
+    <arg name="mir_prefix" default="mir/" />
+    <arg name="rbk_prefix" default="rbkairos/" />
+    <arg name="map_frame_id" default="map" />
+    <arg name="panda_group_name" default="panda_arm" />
+    <arg name="gripper_group_name" default="panda_hand" />
+
+    <node pkg="rviz" type="rviz" name="rviz_collabo" args="-d $(arg config)" output="screen">
+        <param name="mir_prefix" value="$(arg mir_prefix)" />
+        <param name="rbk_prefix" value="$(arg rbk_prefix)" />
+        <param name="map_frame_id" value="$(arg map_frame_id)" />
+        <param name="panda_group_name" value="$(arg panda_group_name)" />
+        <param name="gripper_group_name" value="$(arg gripper_group_name)" />
+    </node>
+
+</launch>

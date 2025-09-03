@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot name="darko_projector" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:include filename="$(find robotnik_sensors)/urdf/utils/inertia.urdf.xacro" />
+  
+  <xacro:macro name="darko_projector" params="prefix parent *origin">
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <link name="${prefix}_base_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://darko_description/meshes/projector.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://darko_description/meshes/projector.dae"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0.0 0" rpy="0 0 0" />
+        <mass value="5.0" />
+        <xacro:solid_cuboid_inertia m="5.0" w="0.3" h="0.12" d="0.3" />
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_joint" type="fixed">
+      <parent link="${prefix}_base_link"/>
+      <child link="${prefix}_link" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}_link"/>
+
+  </xacro:macro>
+
+</robot>

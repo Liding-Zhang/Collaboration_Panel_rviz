@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id_robot" default="robot"/>
+
+    <arg name="x_init_pose" default="0"/>
+    <arg name="y_init_pose" default="0"/>
+    <arg name="z_init_pose" default="0"/>
+    <arg name="yaw_init_pose" default="0"/>
+
+    <arg name="arm_model" default="panda"/>
+    <arg name="arm_id" default="$(arg arm_model)"/>
+    <arg name="xacro_robot" default="rbkairos_$(arg arm_model).urdf.xacro"/>
+    <arg name="launch_robot_localization" default="false"/>
+    <arg name="launch_amcl_and_mapserver" default="true"/>
+    <arg name="launch_gmapping" default="false"/>
+    <arg name="launch_move_base" default="false"/>
+    
+    <arg name="map_package" default="$(find summit_xl_localization)"/>
+    <arg name="map_folder" default="maps"/>
+    <arg name="map_file" default="empty/empty.yaml"/>
+    <arg name="robot_localization_mode" default="odom"/><!-- odom, complete (including gps)-->
+    <arg name="ros_planar_move_plugin" default="true"/><!-- plugin to simulate omni drive -->
+
+    <arg name="launch_arm" default="true"/>    <!-- moveit -->
+    <arg name="launch_move_group" default="false"/>    <!-- moveit -->
+    <arg name="has_safety_module" default="false"/>
+    <arg name="odom_model_type" default="omni"/>
+    <arg name="movebase_local_planner" default="teb"/>
+    <arg name="launch_pad" default="false"/>
+    <arg name="launch_gripper" default="false"/>
+    <arg name="launch_base_hw_sim" default="false"/>
+    <arg name="launch_battery_estimator" default="false"/>
+    <arg name="use_gpu" default="false"/>
+    <arg name="gripper_model" default="egh"/>
+
+    <arg name="load_arm_kinematics_file" default="true"/>
+
+    <arg name="transmission" default="position" />
+    <arg name="arm_controller" default="$(arg transmission)_joint_trajectory_controller" />
+
+    <arg name="initial_joint_positions"
+       doc="Initial joint configuration of the panda. Specify as a list of name/value pairs in form of '-J [name-of-joint] [value-in-rad]'. Default is a 90 degree bend in the elbow"
+       default="-J $(arg arm_model)_joint1 0
+                -J $(arg arm_model)_joint2 -0.785398163
+                -J $(arg arm_model)_joint3 0
+                -J $(arg arm_model)_joint4 -2.35619449
+                -J $(arg arm_model)_joint5 0
+                -J $(arg arm_model)_joint6 1.57079632679
+                -J $(arg arm_model)_joint7 0.785398163397
+                -J $(arg arm_model)_finger_joint1 0.001
+                -J $(arg arm_model)_finger_joint2 0.001"
+       />
+
+    <!-- BEGIN ROBOT -->
+    <group ns="$(arg id_robot)">
+
+        <arg name="prefix" value="$(arg id_robot)_"/>
+
+        <!-- Load the URDF into the ROS Parameter Server -->
+        <param name="robot_description"
+        command="$(find xacro)/xacro '$(find rbkairos_description)/robots/$(arg xacro_robot)' prefix:=$(arg prefix) ros_planar_move_plugin:=$(arg ros_planar_move_plugin) load_kinematics_file:=$(arg load_arm_kinematics_file) use_gpu_for_simulation:=$(arg use_gpu) --inorder"/>
+
+        <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /-->
+        <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher">
+            <rosparam param="source_list">[franka_state_controller/joint_states, franka_gripper/joint_states] </rosparam>
+            <param name="rate" value="30"/>
+        </node>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+            <remap from="/joint_states" to="joint_states" />
+        </node>
+
+        <rosparam file="$(find franka_gazebo)/config/franka_hw_sim.yaml" subst_value="true" />
+        <rosparam file="$(find franka_gazebo)/config/sim_controllers.yaml" subst_value="true" />
+
+        <param name="m_ee" value="0.76"/>
+
+        <!-- Spawner model into gazebo -->
+        <node name="urdf_spawner_rbkairos_model" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+         args="-x $(arg x_init_pose)
+               -y $(arg y_init_pose)
+               -z $(arg z_init_pose)
+               -Y $(arg yaw_init_pose)
+               -urdf
+               -param robot_description
+               -model $(arg id_robot)
+               -unpause
+               $(arg initial_joint_positions)
+               "/>
+
+
+        <!-- start rbkairos_control nodes -->
+        <include file="$(find rbkairos_control)/launch/rbkairos_franka_control.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+            <arg name="arm_id" value="$(arg arm_model)"/>
+            <arg name="sim" value="true"/>
+
+            <arg name="kinematics" value="omni"/>
+
+            <arg name="ros_planar_move_plugin" value="$(arg ros_planar_move_plugin)"/>
+            <arg name="sim_arm_control" value="$(arg launch_arm)"/>
+            <arg name="sim_gripper_control" value="$(arg launch_gripper)"/>
+            <arg name="arm_controllers" value="$(arg arm_controller)"/>
+            <arg name="gripper_controllers" value="franka_gripper"/>
+        </include>
+
+        <!-- pad -->
+        <include if="$(arg launch_pad)" file="$(find summit_xl_pad)/launch/summit_xl_pad.launch"/>
+
+        <!-- base_hw_sim -->
+        <include if="$(arg launch_base_hw_sim)" file="$(find robotnik_base_hw_sim)/launch/summit_xl_hw_sim.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+        </include>
+
+        <group if="$(arg launch_battery_estimator)">
+            <!-- start dock_manager node -->
+            <include file="$(find charge_manager)/launch/charge_manager.launch">
+                <arg name="docker_mode" value="manual_sw"/>
+                <arg name="inverted_contact_relay_input" value="false"/>
+                <arg name="contact_relay_input_number" value="2"/>
+                <arg name="charger_relay_output_number" value="1"/>
+            </include>
+
+            <!-- start battery_estimation node -->
+            <include file="$(find battery_estimation)/launch/table_battery.launch">
+                <arg name="battery_voltage" value="48"/>
+                <arg name="read_voltage_from_analog_input" value="true"/>
+                <arg name="voltage_analog_input_number" value="1" />
+                <arg name="current_analog_input_number" value="2" />
+            </include>
+
+        </group>
+        <!-- amcl and map server base-->
+        <include if="$(arg launch_amcl_and_mapserver)" file="$(find summit_xl_localization)/launch/map_server.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="maps_path" value="$(arg map_package)/$(arg map_folder)"/>
+        </include>
+        <include if="$(arg launch_amcl_and_mapserver)" file="$(find summit_xl_localization)/launch/amcl.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+            <arg name="x_init_pose" value="$(arg x_init_pose)"/>
+            <arg name="y_init_pose" value="$(arg y_init_pose)"/>
+            <arg name="z_init_pose" value="$(arg z_init_pose)"/>
+            <arg name="odom_model_type" value="$(arg odom_model_type)"/>
+        </include>
+
+        <!-- move base -->
+        <include if="$(arg launch_move_base)" file="$(find summit_xl_navigation)/launch/move_base.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+            <arg name="local_planner" value="$(arg movebase_local_planner)"/>
+            <arg if="$(arg ros_planar_move_plugin)" name="differential_robot" value="false"/>
+            <arg unless="$(arg ros_planar_move_plugin)" name="differential_robot" value="true"/>
+        </include>
+
+        <!-- gmapping -->
+        <include if="$(arg launch_gmapping)" file="$(find summit_xl_localization)/launch/slam_gmapping.launch">
+            <arg name="prefix" value="$(arg prefix)"/>
+        </include>
+
+        <!-- MoveGroup Moveit! -->
+        <include if="$(arg launch_move_group)" file="$(find rbkairos_panda_moveit_config)/launch/demo.launch">
+            <arg name="load_robot_description" value="false"/>
+            <arg name="moveit_controller_manager" value="simple" />
+            <arg name="arm_id" value="$(arg arm_id)" />
+            <arg name="transmission" value="$(arg transmission)" />
+        </include>
+
+    </group>
+
+
+
+</launch>

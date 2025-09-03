@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="darko_mounting_platform" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:include filename="$(find robotnik_sensors)/urdf/utils/inertia.urdf.xacro" />
+  
+  <xacro:macro name="darko_mounting_platform" params="prefix parent *origin">
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_link" />
+    </joint>
+
+    <link name="${prefix}_link">
+      <visual>
+        <origin xyz="0 0 -0.19" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://darko_description/meshes/mounting_platform_02.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 -0.19" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://darko_description/meshes/mounting_platform_02.dae"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0.0 0.0 -0.19" rpy="0 0 0" />
+        <mass value="3.5" />
+        <xacro:solid_cuboid_inertia m="3.5" w="0.8" h="0.15" d="0.7" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+
+</robot>

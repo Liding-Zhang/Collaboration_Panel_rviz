@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <name>darko_description</name>
+  <version>0.1.0</version>
+  <description>The darko_description package</description>
+
+  <maintainer email="martin.magnusson@oru.se">Martin Magnusson</maintainer>
+  <maintainer email="timm.linder@de.bosch.com">Timm Linder</maintainer>
+  
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>robotnik_sensors</run_depend>
+  <run_depend>summit_xl_description</run_depend>
+
+  <export/>
+  
+</package>

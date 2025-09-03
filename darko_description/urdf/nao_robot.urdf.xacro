@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot name="darko_nao_robot" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:include filename="$(find robotnik_sensors)/urdf/utils/inertia.urdf.xacro" />
+  
+  <xacro:macro name="darko_nao_robot" params="prefix parent sitting:=false *origin">
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_link" />
+    </joint>
+
+    <link name="${prefix}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <xacro:if value="${sitting}">
+            <mesh filename="package://darko_description/meshes/nao_sitting.dae"/>
+          </xacro:if>
+          <xacro:unless value="${sitting}">
+            <mesh filename="package://darko_description/meshes/nao_standing.dae"/>
+          </xacro:unless>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+          <xacro:if value="${sitting}">
+            <mesh filename="package://darko_description/meshes/nao_sitting.dae"/>
+          </xacro:if>
+          <xacro:unless value="${sitting}">
+            <mesh filename="package://darko_description/meshes/nao_standing.dae"/>
+          </xacro:unless>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}" />
+        <mass value="3.5" />
+        <xacro:solid_cuboid_inertia m="3.5" w="0.3" h="0.6" d="0.1" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+
+</robot>

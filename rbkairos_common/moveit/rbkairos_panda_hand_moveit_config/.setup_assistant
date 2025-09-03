@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: rbkairos_description
+    relative_path: robots/versions/rbkairos_panda_hand.urdf.xacro
+    xacro_args: --inorder prefix:=robot_
+  SRDF:
+    relative_path: config/rbkairos.srdf
+  CONFIG:
+    author_name: Michael Lemanov
+    author_email: michael.lemanov@tum.de
+    generated_timestamp: 1713452436

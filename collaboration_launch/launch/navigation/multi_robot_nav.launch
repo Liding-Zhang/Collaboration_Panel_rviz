@@ -1,0 +1,60 @@
+<launch>
+
+    <arg name="map_package" default="$(find summit_xl_localization)"/>
+    <arg name="map_folder" default="maps"/>
+    <arg name="map_file" default="willow_garage/willow_garage.yaml"/>
+    <arg name="launch_mapserver" default="true"/>
+
+    <!-- Test arg for prefix -->
+    <arg name="frame_id" default="map"/>
+     
+    <!-- Launch Map Server TODO: One map sever for both robots-->
+    <include if="$(arg launch_mapserver)" file="$(find summit_xl_localization)/launch/map_server.launch">
+        <arg name="frame_id" value="$(arg frame_id)"/>
+        <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="maps_path" value="$(arg map_package)/$(arg map_folder)"/>
+    </include>
+
+
+    <!-- arg to config the rbkairos_nav_moveit launch file-->
+    
+
+    <!--params of the different robots-->
+    <!-- rbkairos -->
+    <arg name="id_rbkairos" default="rbkairos"/>
+    <arg name="default_arm_model" default="panda"/>
+    <arg name="x_init_pose_rbkairos" default="0" />
+    <arg name="y_init_pose_rbkairos" default="0" />
+    <arg name="z_init_pose_rbkairos" default="0" />
+    <arg name="yaw_init_pose_rbkairos" default="0"/>
+    <arg name="gmapping_rbkairos" default="false"/>
+    <arg name="move_base_rbkairos" default="true"/>
+    <arg name="amcl_rbkairos" default="true"/>
+    <arg name="arm_model_rbkairos" default="$(arg default_arm_model)"/>
+    <arg name="moveit_movegroup_rbkairos" default="true"/>
+    <arg name="ros_planar_move_plugin" default="true"/>
+
+    <!-- Launch rbkairos navigation and MoveIt -->
+    <include file="$(find collaboration_launch)/launch/navigation/rbkairos_nav_moveit.launch">
+        <arg name="id_robot" value="$(arg id_rbkairos)"/>
+        <arg name="x_init_pose" value="$(arg x_init_pose_rbkairos)"/>
+        <arg name="y_init_pose" value="$(arg y_init_pose_rbkairos)"/>
+        <arg name="z_init_pose" value="$(arg z_init_pose_rbkairos)"/>
+        <arg name="yaw_init_pose" value="$(arg yaw_init_pose_rbkairos)"/>
+        <arg name="launch_amcl" value="$(arg amcl_rbkairos)"/>
+        <arg name="launch_gmapping" value="$(arg gmapping_rbkairos)"/>
+        <arg name="launch_move_base" value="$(arg move_base_rbkairos)"/>
+        <arg name="ros_planar_move_plugin" value="$(arg ros_planar_move_plugin)"/>
+        <arg name="arm_model" value="$(arg arm_model_rbkairos)"/>
+        <arg name="launch_move_group" value="$(arg moveit_movegroup_rbkairos)"/>
+        <arg name="global_frame" value="$(arg frame_id)"/>
+    </include>
+
+    <!-- Launch MiR robot navigation -->
+    <include file="$(find collaboration_launch)/launch/navigation/mir_nav.launch">
+        <arg name="tf_prefix" value="mir"/>
+        <arg name="robot_x" value="0.0" />
+        <arg name="robot_y" value="-2.0" />
+    </include>
+
+</launch>

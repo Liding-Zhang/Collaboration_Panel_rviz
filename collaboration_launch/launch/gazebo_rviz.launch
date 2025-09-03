@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Arguments for the combined launch -->
+    <arg name="gui" default="true" />
+    <arg name="mir_type" default="mir_100" doc="The MiR variant. Can be 'mir_100' or 'mir_250' for now." />
+    <arg name="tf_prefix" default="" doc="tf_prefix to be used by gazebo plugins and in the robot's urdf etc." />
+    <arg name="namespace" default="$(arg tf_prefix)" doc="Namespace to push all topics into."/>
+
+    <arg name="launch_rviz" default="true" />
+    <arg name="world" default="$(find rbkairos_gazebo)/worlds/office.world" />
+    <arg name="debug" default="false" />
+    <arg name="robot_x" default="0.0" />
+    <arg name="robot_y" default="0.0" />
+    <arg name="robot_yaw" default="0.0" />
+
+    <arg name="map_package" default="$(find summit_xl_localization)"/>
+    <arg name="map_folder" default="maps"/>
+    <arg name="map_file" default="empty/empty.yaml"/>
+
+    <!-- Launch Gazebo with the specified world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(arg world)"/>
+      <arg name="debug" value="$(arg debug)" />
+      <arg name="paused" value="true"/>
+      <arg name="use_sim_time" value="true"/>
+      <arg name="headless" value="false"/>
+      <arg name="gui" value="$(arg gui)" />
+    </include>
+
+    <!-- Group for MiR robot remapping and spawning -->
+    <group if="$(eval namespace != '')">
+      <group>
+        <remap from="$(arg namespace)/joint_states"                 to="$(arg namespace)/mir/joint_states" />
+        <remap from="$(arg namespace)/mobile_base_controller/cmd_vel" to="$(arg namespace)/cmd_vel" />
+        <remap from="$(arg namespace)/mobile_base_controller/odom"    to="$(arg namespace)/odom" />
+      
+        
+      </group>
+
+      <group ns="$(arg namespace)">
+        <!-- Spawn the MiR robot in the specified world -->
+        <include file="$(find mir_gazebo)/launch/mir_gazebo_common.launch">
+            <arg name="robot_x" value="$(arg robot_x)" />
+            <arg name="robot_y" value="$(arg robot_y)" />
+            <arg name="robot_yaw" value="$(arg robot_yaw)" />
+            <arg name="mir_type" value="$(arg mir_type)" />
+            <arg name="tf_prefix" value="$(arg tf_prefix)" />
+        </include>
+      </group>
+      
+      <include file="$(find mir_navigation)/launch/amcl.launch">
+          <arg name="initial_pose_x" value="10.0"/>
+          <arg name="initial_pose_y" value="8.0"/>
+          <arg name="tf_prefix" value="$(arg tf_prefix)"/>
+      </include>
+      <!--
+      <include file="$(find mir_navigation)/launch/start_planner.launch">
+          <arg name="map_file" value="$(arg map_package)/$(arg map_folder)/$(arg map_file)"/>
+          <arg name="with_virtual_walls" value="false"/>
+          <arg name="prefix" value="mir/"/>
+      </include>  
+      -->
+    </group>
+
+    <!-- Include the spawn maze launch -->
+    <!--include file="$(find mir_gazebo)/launch/includes/spawn_maze.launch.xml" /-->
+
+    <!-- Launch RViz if specified -->
+    <node if="$(arg launch_rviz)" name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find rbkairos_gazebo)/rviz/rbkairos_a.rviz"/>
+</launch>
