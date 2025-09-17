@@ -3,7 +3,7 @@ This repository contains the dependency packages `collaboration_launch` and `rvi
 The first package is responsible for launching the multi-robot simulation with the DARKO robot cosntisting of the RB-Kairos base and the Franke Emika Panda arm attached to the base, in combination with the MiR 100 robot. 
 The second package delivers a custom RViz panel for navigation and motion planning of the mentioned multi-robot simulation.
 
-# Install before Build
+# Install before Build (dependencies)
 Install the following:
 ```
 sudo apt-get install libspdlog-dev
