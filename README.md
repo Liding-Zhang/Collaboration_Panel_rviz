@@ -1,6 +1,6 @@
 # Multi-Robot Simulation and RViz GUI 
 This repository contains the dependency packages `collaboration_launch` and `rviz_collabo`.
-The first package is responsible for launching the multi-robot simulation with the DARKO robot consisting of the RB-Kairos base and the Franke Emika Panda arm attached to the base, in combination with the MiR 100 robot. 
+The first package is responsible for launching the multi-robot simulation with the DARKO robot, consisting of the RB-Kairos base and the Franke Emika Panda arm attached to the base, in combination with the MiR 100 robot. 
 The second package delivers a custom RViz panel for navigation and motion planning of the mentioned multi-robot simulation.
 
 # Install before Build (dependencies)
@@ -13,9 +13,9 @@ sudo apt-get install libspdlog-dev
 Clone this repository into the `src` folder of your workspace:
 ```
 cd ~/path_to_workspace/src
-git clone https://github.com/michilem/Collaboration_Panel.git .
+git clone https://github.com/michilem/Collaboration_Panel.git.
 ```
-Next enter the root of your workspace and run:
+Next ,enter the root of your workspace and run:
 ```
 catkin build
 ```
@@ -25,7 +25,7 @@ source devel/setup.bash
 ```
 
 ## Run the Simulation
-First the robots need to be spawned into gazebo:
+Firs,t the robots need to be spawned into Gazebo:
 ```
 roslaunch collaboration_launch multi_robot_gazebo.launch
 ```
