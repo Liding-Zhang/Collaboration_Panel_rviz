@@ -15,7 +15,7 @@ Clone this repository into the `src` folder of your workspace:
 cd ~/path_to_workspace/src
 git clone https://github.com/michilem/Collaboration_Panel.git.
 ```
-Next ,enter the root of your workspace and run:
+Next, enter the root of your workspace and run:
 ```
 catkin build
 ```
@@ -25,11 +25,11 @@ source devel/setup.bash
 ```
 
 ## Run the Simulation
-Firs,t the robots need to be spawned into Gazebo:
+First, the robots need to be spawned into Gazebo:
 ```
 roslaunch collaboration_launch multi_robot_gazebo.launch
 ```
-Next launch the navigation and MoveIt functionalities of the robots:
+Next, launch the navigation and MoveIt functionalities of the robots:
 ```
 roslaunch collaboration_launch multi_robot_nav.launch
 ```
