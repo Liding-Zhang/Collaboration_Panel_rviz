@@ -1,7 +1,7 @@
 # Multi-Robot Simulation and RViz GUI Design
 This repository contains the dependency packages `collaboration_launch` and `rviz_collabo`.
 The first package is responsible for launching the multi-robot simulation with the DARKO robot, consisting of the RB-Kairos base and the Franke Emika Panda arm attached to the base, in combination with the MiR 100 robot. 
-The second package delivers a custom RViz panel for navigation and motion planning of the mentioned multi-robot simulation.
+The second package provides a custom RViz panel for navigation and motion planning in the aforementioned multi-robot simulation.
 
 # Install before Build (dependencies)
 Install the following:
@@ -33,7 +33,7 @@ Next, launch the navigation and MoveIt functionalities of the robots:
 ```
 roslaunch collaboration_launch multi_robot_nav.launch
 ```
-Only afterwards launch RViz with the custom GUI Panel since it assumes the robot simulation to be running.<br>
+Only afterwards launch RViz with the custom GUI panel, as it assumes the robot simulation is running.<br>
 Option 1: Directly launch RViz with the Panel:
 ```
 roslaunch rviz_collabo rviz_collabo.launch
