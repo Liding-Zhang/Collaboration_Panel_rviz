@@ -8,12 +8,37 @@ Install the following:
 ```
 sudo apt-get install libspdlog-dev
 ```
-
+# Install ROS packages
+```
+  #!/bin/bash
+  sudo apt install -y python3-pip
+  python3 -m pip install scipy
+  python3 -m pip install roboticstoolbox-python
+  sudo apt-get install -y ros-noetic-navigation
+  sudo apt-get install -y ros-noetic-object-recognition-msgs
+  sudo apt-get install -y ros-noetic-graph-msgs
+  sudo apt-get install -y ros-noetic-ruckig
+  sudo apt-get install -y ros-noetic-twist-mux
+  sudo apt-get install -y ros-noetic-pybind11-catkin
+  sudo apt-get install -y ros-noetic-robot-localization
+  sudo apt-get install -y ros-noetic-mavros-msgs
+  sudo apt-get install -y ros-noetic-gmapping
+  sudo apt-get install -y ros-noetic-joint-trajectory-controller
+  sudo apt-get install -y ros-noetic-warehouse-ros
+  sudo apt-get install -y ros-noetic-eigenpy
+  sudo apt-get install -y ros-noetic-rosparam-shortcuts
+  sudo apt-get install -y ros-noetic-octomap-msgs
+  sudo apt-get install -y ros-noetic-eigen-stl-containers
+  sudo apt-get install -y ros-noetic-random-numbers
+  sudo apt-get install -y ros-noetic-velocity-controllers
+  
+  echo "ROS packages installation completed."
+```
 ## Build
 Clone this repository into the `src` folder of your workspace:
 ```
 cd ~/path_to_workspace/src
-git clone https://github.com/michilem/Collaboration_Panel.git.
+git clone https://github.com/Liding-Zhang/Collaboration_Panel_rviz.git
 ```
 Next, enter the root of your workspace and run:
 ```
