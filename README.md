@@ -58,7 +58,7 @@ Next, launch the navigation and MoveIt functionalities of the robots:
 ```
 roslaunch collaboration_launch multi_robot_nav.launch
 ```
-Only afterwards launch RViz with the custom GUI panel, as it assumes the robot simulation is running.<br>
+Only launch RViz with the custom GUI panel afterwards, as it assumes the robot simulation is already running.<br>
 Option 1: Directly launch RViz with the Panel:
 ```
 roslaunch rviz_collabo rviz_collabo.launch
