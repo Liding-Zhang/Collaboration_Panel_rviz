@@ -8,7 +8,7 @@ Install the following:
 ```
 sudo apt-get install libspdlog-dev
 ```
-# Install ROS packages
+# Install ROS packages(dependencies)
 ```
   #!/bin/bash
   sudo apt install -y python3-pip
