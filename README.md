@@ -49,7 +49,7 @@ After building the packages, make sure to source the workspace:
 source devel/setup.bash
 ```
 
-## Run the Simulation
+## Run the Simulation in Gazebo
 First, the robots need to be spawned into Gazebo:
 ```
 roslaunch collaboration_launch multi_robot_gazebo.launch
@@ -63,7 +63,7 @@ Option 1: Directly launch RViz with the Panel:
 ```
 roslaunch rviz_collabo rviz_collabo.launch
 ```
-**OR** <br>
+**OR direct launch** <br>
 Option 2: Launch RViz without the Panel first:
 ```
 rviz -d $(rospack find rbkairos_gazebo)/rviz/rbkairos_multi.rviz
